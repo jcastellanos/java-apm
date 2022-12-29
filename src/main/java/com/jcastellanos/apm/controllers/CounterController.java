@@ -11,15 +11,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-public class PingController {
+public class CounterController {
     private final MeterRegistry meterRegistry;
 
-    public PingController(MeterRegistry registry) {
+    public CounterController(MeterRegistry registry) {
         this.meterRegistry = registry;
     }
 
     @GetMapping("/java-apm/counter")
-    public Response ping(@RequestParam(name = "msg", defaultValue = "", required = false) String msg) throws UnknownHostException {
+    public Response counter(@RequestParam(name = "msg", defaultValue = "", required = false) String msg) throws UnknownHostException {
         properties();
         List<String> envs = envs();
         if(msg == null || msg.isEmpty() || ! "exception".equals(msg) ) {
@@ -34,6 +34,25 @@ public class PingController {
                 Counter counter = meterRegistry.counter("app.java-apm.counter", "status", "error");
                 counter.increment();
                 throw new RuntimeException("Forced error in msg");
+        }
+    }
+
+    @GetMapping("/java-apm2/counter")
+    public Response counter2(@RequestParam(name = "msg", defaultValue = "", required = false) String msg) throws UnknownHostException {
+        properties();
+        List<String> envs = envs();
+        if(msg == null || msg.isEmpty() || ! "exception".equals(msg) ) {
+            Response res = new Response();
+            res.setMessage("Counter incremented");
+            res.setHost(InetAddress.getLocalHost().getHostName());
+            res.setEnvironment(envs);
+            Counter counter = meterRegistry.counter("app.java-apm.counter", "status","ok");
+            counter.increment();
+            return res;
+        } else {
+            Counter counter = meterRegistry.counter("app.java-apm.counter", "status", "error");
+            counter.increment();
+            throw new RuntimeException("Forced error in msg");
         }
     }
 
