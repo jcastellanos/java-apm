@@ -13,4 +13,4 @@ COPY --from=build /home/gradle/src/build/libs/java-apm.jar java-apm.jar
 # Make port 8080 available to the world outside this container
 # EXPOSE 8080
 ENV JAVA_OPTS=" -XX:+UseContainerSupport -XX:MaxRAMPercentage=70 -Djava.security.egd=file:/dev/./urandom"
-ENTRYPOINT [ "sh", "-c", "java -javaagent:/elastic-apm-agent.jar $JAVA_OPTS +-jar java-apm.jar" ]
+ENTRYPOINT [ "sh", "-c", "java -javaagent:/elastic-apm-agent.jar $JAVA_OPTS -jar java-apm.jar" ]
